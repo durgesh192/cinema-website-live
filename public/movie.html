@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cinema</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <h2>🎬 Cinema </h2>
+      <p class="nav-sub">Netflix Inspired Movie Platform</p>
+    </div>
+
+    <div class="search-box top-search">
+      <input id="search" placeholder="Search movies..." oninput="searchMovies()" />
+    </div>
+  </header>
+
+  <main class="main-page">
+    <section class="hero-banner">
+      <div class="hero-overlay">
+        <h1>Welcome to Genzy Movie Menia</h1>
+        <p>Explore Trending, Popular, and Latest Movies in a stylish OTT-style interface.</p>
+      </div>
+    </section>
+
+    <section class="filter-bar">
+      <button onclick="filterMovies('All')">All</button>
+      <button onclick="filterMovies('South')">South</button>
+      <button onclick="filterMovies('Bollywood')">Bollywood</button>
+      <button onclick="filterMovies('Hollywood')">Hollywood</button>
+      <button onclick="filterMovies('Web Series')">Web Series</button>
+    </section>
+
+    <section class="movie-section">
+      <h2 class="section-title">🔥 Trending Movies</h2>
+      <div id="trendingBox" class="movies-container"></div>
+    </section>
+
+    <section class="movie-section">
+      <h2 class="section-title">⭐ Popular Movies</h2>
+      <div id="popularBox" class="movies-container"></div>
+    </section>
+
+    <section class="movie-section">
+      <h2 class="section-title">🎬 Normal Movies</h2>
+      <div id="normalBox" class="movies-container"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

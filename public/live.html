@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Stream - Cinema</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-left">
+      <h2>🎬 Cinema </h2>
+    </div>
+  </header>
+
+  <main class="main-page">
+    <div class="live-container">
+      <div class="live-header">
+        <div>
+          <span class="live-badge">🔴 LIVE NOW</span>
+          <h1 id="streamTitle" style="display:inline-block; margin-left:15px; font-size:24px;">Loading Stream...</h1>
+        </div>
+        <a href="/" class="back-btn">⬅ Back to Home</a>
+      </div>
+
+      <div class="video-wrapper" id="videoContainer">
+        <p style="text-align:center; margin-top:20%; color:#888;">Fetching Live Stream...</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const streamUrl = urlParams.get('url');
+      const title = urlParams.get('title') || "Live Stream";
+
+      document.getElementById("streamTitle").innerText = title;
+
+      if(streamUrl) {
+        let embedUrl = streamUrl;
+        if(streamUrl.includes("youtube.com/watch?v=")) {
+          embedUrl = streamUrl.replace("watch?v=", "embed/");
+        } else if(streamUrl.includes("youtu.be/")) {
+          const videoId = streamUrl.split("youtu.be/")[1].split("?")[0];
+          embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        }
+
+        document.getElementById("videoContainer").innerHTML = `
+          <iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        `;
+      } else {
+        document.getElementById("videoContainer").innerHTML = `<p style="text-align:center; margin-top:20%; color:#ff3b3b;">❌ Error: Stream link not found.</p>`;
+      }
+    });
+  </script>
+</body>
+</html>

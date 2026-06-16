@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CINEMA - Premium Streaming</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+  <div class="app-container">
+    <nav class="sidebar">
+      <div class="logo">C</div>
+      <div class="nav-links">
+        <a href="#" class="active" title="Home">🏠</a>
+        <a href="#" title="AI Voice Filter" onclick="openAIModal()">🎙️</a>
+        <a href="#" title="Movies">🎬</a>
+        <a href="/watch.html" title="Watch Party" target="_blank">👥</a>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <div class="banner-container">
+        <div class="banner-wrapper" id="bannerWrapper"></div>
+        <button class="banner-btn prev" onclick="moveBanner(-1)">&#10094;</button>
+        <button class="banner-btn next" onclick="moveBanner(1)">&#10095;</button>
+      </div>
+
+      <div class="content-section">
+        <div class="section-header">
+            <h3 class="section-title">Trending Now</h3>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <input type="text" id="search" class="search-bar" placeholder="Search movies..." autocomplete="off">
+                <button id="resetBtn" class="reset-btn" onclick="resetAIFilter()" style="display: none;">✖ Clear Filter</button>
+            </div>
+        </div>
+        <div class="horizontal-list" id="moviesGrid">
+          </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="aiModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 style="color:#e50914; margin:0;">🎙️ CINEMA AI</h3>
+        <button class="close-btn" onclick="closeAIModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="chat-box" id="chatBox">
+          <div style="color:#aaa; margin-bottom:10px;">Namaste! Mic dabaiye aur boliye aapko kaisi movie dekhni hai? ✨</div>
+        </div>
+        <div class="chat-input-area">
+          <button id="micBtn" onclick="startVoiceSearch()">🎤</button>
+          <input type="text" id="userInput" placeholder="Likh kar search karein..." autocomplete="off">
+          <button class="send-btn" onclick="processAIFilter()">Filter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
