@@ -8,20 +8,87 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// Middleware
 app.use(express.json());
 app.use(express.static("public"));
 
 // ==========================================
-// 🚀 DATABASE CONNECTION
+// 🚀 1. DATABASE CONNECTION
 // ==========================================
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Database Connected Successfully!"))
   .catch(err => console.log("❌ DB Connection Error:", err));
 
-// (Aapke purane /api/movies wale POST/GET routes yahan rahenge)
+// ==========================================
+// 🚀 2. DATABASE MODELS (Schema)
+// ==========================================
+// Movie Model
+const movieSchema = new mongoose.Schema({
+    title: String,
+    poster: String,
+    link: String,
+    category: String,
+    language: String
+});
+const Movie = mongoose.model("Movie", movieSchema);
+
+// Banner Model
+const bannerSchema = new mongoose.Schema({
+    title: String,
+    desc: String,
+    image: String,
+    link: String
+});
+const Banner = mongoose.model("Banner", bannerSchema);
 
 // ==========================================
-// 🚀 WATCH PARTY & VIDEO CALL LOGIC (SOCKET.IO)
+// 🚀 3. API ROUTES (Admin Panel ke liye)
+// ==========================================
+
+// Movies mangane ka rasta
+app.get("/api/movies", async (req, res) => {
+    try {
+        const movies = await Movie.find();
+        res.json(movies);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch movies" });
+    }
+});
+
+// Nayi movie add karne ka rasta
+app.post("/api/movies", async (req, res) => {
+    try {
+        const newMovie = new Movie(req.body);
+        await newMovie.save();
+        res.status(201).json({ message: "Movie Added Successfully" });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to add movie" });
+    }
+});
+
+// Banners mangane ka rasta
+app.get("/api/banners", async (req, res) => {
+    try {
+        const banners = await Banner.find();
+        res.json(banners);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch banners" });
+    }
+});
+
+// Naya banner add karne ka rasta
+app.post("/api/banners", async (req, res) => {
+    try {
+        const newBanner = new Banner(req.body);
+        await newBanner.save();
+        res.status(201).json({ message: "Banner Added Successfully" });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to add banner" });
+    }
+});
+
+// ==========================================
+// 🚀 4. WATCH PARTY & VIDEO CALL LOGIC (SOCKET.IO)
 // ==========================================
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId) => {
@@ -43,5 +110,8 @@ io.on("connection", (socket) => {
   });
 });
 
+// ==========================================
+// 🚀 5. START SERVER
+// ==========================================
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`CINEMA Server running on port ${PORT}`));
