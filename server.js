@@ -14,9 +14,9 @@ app.use(express.static("public"));
 // ==========================================
 // 🚀 DATABASE CONNECTION
 // ==========================================
-mongoose.connect("mongodb+srv://diljeetkumar112_db_user:<db_password>@cluster0.o8aucgs.mongodb.net/?appName=Cluster0")
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Database Connected Successfully!"))
-  .catch(err => console.log("❌ DB Connection Error: ", err));
+  .catch(err => console.log("❌ DB Connection Error:", err));
 
 // (Aapke purane /api/movies wale POST/GET routes yahan rahenge)
 
