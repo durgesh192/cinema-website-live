@@ -55,63 +55,68 @@
     </div>
 
 </div>
-
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const socket = io();
     let currentRoom = '';
     let myName = '';
-    let moviesData = [];
 
-    // 1. Database se Movies mangao
+    // 🌟 Magical Code: Check if friend came from an invite link
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomFromLink = urlParams.get('room');
+    const vidFromLink = urlParams.get('vid');
+
     window.onload = async () => {
-        try {
-            const res = await fetch('/api/movies');
-            moviesData = await res.json();
-            const select = document.getElementById('movie-select');
-            select.innerHTML = '<option value="">-- Select a Movie/Match --</option>';
-            
-            moviesData.forEach(movie => {
-                select.innerHTML += `<option value="${movie.link}">${movie.title}</option>`;
-            });
-        } catch (err) {
-            console.error("Error fetching movies");
+        if (roomFromLink && vidFromLink) {
+            // Agar dost invite link se aaya hai:
+            document.getElementById('movie-select').style.display = 'none'; // Movie list chhupa do
+            document.getElementById('movie-select').innerHTML = `<option value="${vidFromLink}">Shared Movie</option>`;
+            document.querySelector('#setup-screen p').innerText = "You are invited to a Watch Party! Enter your name to join.";
+            document.querySelector('#setup-screen button').innerText = "Join Party 🎉";
+        } else {
+            // Agar aap khud room bana rahe ho (Normal UI):
+            try {
+                const res = await fetch('/api/movies');
+                const moviesData = await res.json();
+                const select = document.getElementById('movie-select');
+                select.innerHTML = '<option value="">-- Select a Movie/Match --</option>';
+                moviesData.forEach(movie => {
+                    select.innerHTML += `<option value="${movie.link}">${movie.title}</option>`;
+                });
+            } catch (err) { console.error("Error fetching movies"); }
         }
     };
 
-    // 2. Room Create/Join karo
     function createRoom() {
         const selectedLink = document.getElementById('movie-select').value;
         myName = document.getElementById('username').value;
 
-        if (!selectedLink || !myName) return alert("Please select a movie and enter your name!");
+        if (!selectedLink || !myName) return alert("Please fill all details!");
 
-        // Ek random Room ID bnao (Ya URL se lo)
-        currentRoom = Math.random().toString(36).substring(2, 8);
+        // Agar dost link se aaya hai to wahi room lo, warna naya banao
+        currentRoom = roomFromLink ? roomFromLink : Math.random().toString(36).substring(2, 8);
         
         document.getElementById('setup-screen').style.display = 'none';
         document.getElementById('watch-room').style.display = 'block';
-        document.getElementById('invite-link').innerText = window.location.href + "?room=" + currentRoom;
+        
+        // 🌟 Magical Code: Invite link me room aur video dono pass karo
+        const inviteUrl = window.location.href.split('?')[0] + "?room=" + currentRoom + "&vid=" + encodeURIComponent(selectedLink);
+        document.getElementById('invite-link').innerText = inviteUrl;
 
-        // Player Set karo (MP4 vs Iframe)
         const videoContainer = document.getElementById('video-container');
         if (selectedLink.endsWith('.mp4') || selectedLink.endsWith('.m3u8')) {
             videoContainer.innerHTML = `<video id="video-player" src="${selectedLink}" controls></video>`;
             setupVideoSync();
         } else {
-            // Agar Embed link hai
             videoContainer.innerHTML = `<iframe src="${selectedLink}" allowfullscreen></iframe>`;
-            addChatMsg("System", "Embed video detected. Auto-sync is disabled. Please count 3-2-1 and play together in chat!");
+            addChatMsg("System", "Embed video: Please count 3-2-1 and play together in chat!");
         }
 
-        // Server ko batao ki room join kar liya
         socket.emit("join-room", currentRoom, myName);
     }
 
-    // 3. Direct Video Auto-Sync Logic
     function setupVideoSync() {
         const video = document.getElementById('video-player');
-        
         video.addEventListener('play', () => socket.emit('play-video'));
         video.addEventListener('pause', () => socket.emit('pause-video'));
         video.addEventListener('seeked', () => socket.emit('seek-video', video.currentTime));
@@ -121,7 +126,6 @@
         socket.on('seek-video', (time) => { video.currentTime = time; });
     }
 
-    // 4. Chat System
     function sendMessage() {
         const msg = document.getElementById('msg-input').value;
         if (!msg) return;
@@ -139,6 +143,5 @@
         box.scrollTop = box.scrollHeight;
     }
 </script>
-
 </body>
 </html>

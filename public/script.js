@@ -71,6 +71,7 @@ fetch("/api/movies")
     setTimeout(() => { renderMovies(allMovies); }, 800); // Shimmer effect delay
   }).catch(err => console.error("Movies API Error:", err));
 
+// 🌟 YAHI PAR MAGIC HAI: Watch Party aur Download ke dono buttons lag gaye hain
 function renderMovies(moviesToRender) {
   if(!grid) return;
   grid.innerHTML = "";
@@ -80,9 +81,9 @@ function renderMovies(moviesToRender) {
   }
   
   moviesToRender.forEach(m => {
-    let actionButton = `<a href="${m.link || '#'}" class="download-btn" target="_blank">⬇ Watch / Download</a>`;
+    let downloadBtnText = "⬇ Watch / Download";
     if (m.category && m.category.toLowerCase().includes("live")) {
-        actionButton = `<a href="${m.link || '#'}" class="download-btn live-btn" target="_blank">🔴 Watch Live</a>`;
+        downloadBtnText = "🔴 Watch Live";
     } 
 
     const posterSrc = m.poster || m.img || m.image || 'https://via.placeholder.com/300x400?text=No+Poster';
@@ -94,7 +95,16 @@ function renderMovies(moviesToRender) {
       <div class="card-content">
         <h3 class="card-title">${m.title}</h3>
         <span style="color:#aaa; font-size:12px;">${m.category || 'Movie'}</span>
-        ${actionButton}
+        
+        <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
+            <a href="/watch.html?vid=${encodeURIComponent(m.link || '')}" target="_blank" class="btn-watch" style="flex: 1; background-color: #ff6b00; color: white; text-align: center; padding: 8px 5px; text-decoration: none; border-radius: 5px; font-size: 13px; font-weight: bold;">
+                🍿 Watch Party
+            </a>
+            <a href="${m.link || '#'}" target="_blank" class="btn-download" style="flex: 1; background-color: #0088cc; color: white; text-align: center; padding: 8px 5px; text-decoration: none; border-radius: 5px; font-size: 13px; font-weight: bold;">
+                ${downloadBtnText}
+            </a>
+        </div>
+
       </div>
     `;
     grid.appendChild(card);
@@ -112,7 +122,9 @@ if(searchInputDOM) {
 }
 
 // AI LOGIC
+// 🚨 API KEY HATA DI GAYI HAI SECURITY KE LIYE. APNI KEY YAHAN DALEN:
 const geminiApiKey = "AQ.Ab8RN6LpMtImUJ-vlXYz7scFzDdlKpeLSpSNP1IFJJVzZr69rg"; 
+
 async function callGeminiAPI(promptText) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${geminiApiKey}`;
     try {

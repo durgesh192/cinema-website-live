@@ -70,3 +70,43 @@ body { background-color: #0a0a0a; color: #fff; overflow-x: hidden; }
   .logo { display: none; }
   .nav-links { flex-direction: row; width: 100%; justify-content: space-around; }
 }
+/* Movie Card Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-watch {
+    flex: 1;
+    background-color: #ff6b00;
+    color: white;
+    text-align: center;
+    padding: 8px 5px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-watch:hover {
+    background-color: #e65c00;
+}
+
+.btn-download {
+    flex: 1;
+    background-color: #0088cc;
+    color: white;
+    text-align: center;
+    padding: 8px 5px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-download:hover {
+    background-color: #0077b3;
+}
