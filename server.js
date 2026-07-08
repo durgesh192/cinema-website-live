@@ -65,6 +65,29 @@ app.post("/api/movies", async (req, res) => {
         res.status(500).json({ error: "Failed to add movie" });
     }
 });
+// ==========================================
+// 🚀 DELETE ROUTES (Admin Panel ke liye)
+// ==========================================
+
+// Movie Delete karne ka rasta
+app.delete("/api/movies/:id", async (req, res) => {
+    try {
+        await Movie.findByIdAndDelete(req.params.id);
+        res.json({ message: "Movie Deleted Successfully" });
+    } catch (err) {
+        res.status(500).json({ error: "Error deleting movie" });
+    }
+});
+
+// Banner Delete karne ka rasta
+app.delete("/api/banners/:id", async (req, res) => {
+    try {
+        await Banner.findByIdAndDelete(req.params.id);
+        res.json({ message: "Banner Deleted Successfully" });
+    } catch (err) {
+        res.status(500).json({ error: "Error deleting banner" });
+    }
+});
 
 // Banners mangane ka rasta
 app.get("/api/banners", async (req, res) => {
