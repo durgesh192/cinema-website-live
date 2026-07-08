@@ -1,4 +1,3 @@
-
 window.addEventListener('load', () => {
     const searchInput = document.getElementById("search");
     const aiInput = document.getElementById("userInput");
@@ -18,6 +17,7 @@ fetch("/api/banners")
     }
   }).catch(err => console.log("Banner Error:", err));
 
+// 🌟 Banners (With Login Protection)
 function renderBanners(banners) {
   const wrapper = document.getElementById("bannerWrapper");
   if(!wrapper) return;
@@ -28,9 +28,9 @@ function renderBanners(banners) {
       <div class="banner-content">
         <h2>${b.title}</h2>
         <p>${b.desc}</p>
-        <div class="hero-buttons">
-          <a href="${b.link || '#'}" class="play-btn" target="_blank">▶ Watch Now</a>
-          <a href="/watch.html" class="party-btn" target="_blank">👥 Start Watch Party</a>
+        <div class="hero-buttons" style="display: flex; gap: 10px;">
+          <button onclick="handleProtectedAction('${b.link || '#'}')" class="play-btn" style="border:none; cursor:pointer; font-size:15px; padding: 10px 20px; border-radius: 5px;">▶ Watch Now</button>
+          <button onclick="handleProtectedAction('/watch.html?vid=${encodeURIComponent(b.link || '')}')" class="party-btn" style="border:none; cursor:pointer; font-size:15px; padding: 10px 20px; border-radius: 5px; background: rgba(255,255,255,0.2); color: white;">👥 Start Watch Party</button>
         </div>
       </div>
     </div>
@@ -69,10 +69,10 @@ fetch("/api/movies")
   .then(res => res.json())
   .then(data => {
     allMovies = Array.isArray(data) ? data : [];
-    setTimeout(() => { renderMovies(allMovies); }, 800); // Shimmer effect delay
+    setTimeout(() => { renderMovies(allMovies); }, 800); 
   }).catch(err => console.error("Movies API Error:", err));
 
-// 🌟 YAHI PAR MAGIC HAI: Watch Party aur Download ke buttons (with Login Protection)
+// 🌟 Movies (With Login Protection)
 function renderMovies(moviesToRender) {
   if(!grid) return;
   grid.innerHTML = "";
@@ -105,7 +105,6 @@ function renderMovies(moviesToRender) {
                 ${downloadBtnText}
             </button>
         </div>
-
       </div>
     `;
     grid.appendChild(card);
@@ -186,31 +185,6 @@ function startVoiceSearch() {
 }
 
 // ==========================================
-// 🔐 LOGIN SYSTEM LOGIC
-// ==========================================
-let pendingUrl = ""; 
-
-function handleProtectedAction(url) {
-    const isLoggedIn = localStorage.getItem("cinema_logged_in");
-    
-    if (isLoggedIn === "true") {
-        window.open(url, "_blank");
-    } else {
-        pendingUrl = url;
-        const loginModal = document.getElementById("loginModal");
-        if(loginModal) {
-            loginModal.style.display = "flex";
-        } else {
-            alert("Please login first!"); // Fallback agar HTML me modal na ho
-        }
-    }
-}
-
-function closeLoginModal() {
-    document.getElementById("loginModal").style.display = "none";
-}
-
-// ==========================================
 // 🔐 OTP LOGIN SYSTEM LOGIC
 // ==========================================
 let pendingUrl = ""; 
@@ -221,17 +195,23 @@ function handleProtectedAction(url) {
         window.open(url, "_blank");
     } else {
         pendingUrl = url;
-        // Modal reset karke dikhao
-        document.getElementById("phoneStep").style.display = "block";
-        document.getElementById("otpStep").style.display = "none";
-        document.getElementById("phoneNumber").value = "";
-        document.getElementById("otpInput").value = "";
-        document.getElementById("loginModal").style.display = "flex";
+        const loginModal = document.getElementById("loginModal");
+        if(loginModal) {
+            document.getElementById("phoneStep").style.display = "block";
+            document.getElementById("otpStep").style.display = "none";
+            document.getElementById("phoneNumber").value = "";
+            const otpInput = document.getElementById("otpInput");
+            if(otpInput) otpInput.value = "";
+            loginModal.style.display = "flex";
+        } else {
+            alert("Please login to continue!"); 
+        }
     }
 }
 
 function closeLoginModal() {
-    document.getElementById("loginModal").style.display = "none";
+    const loginModal = document.getElementById("loginModal");
+    if(loginModal) loginModal.style.display = "none";
 }
 
 // 📱 OTP Bhejne ka Fake Logic
@@ -242,11 +222,8 @@ function sendOTP() {
         return;
     }
     
-    // UI Update: Phone chhipao, OTP wala dabba dikhao
     document.getElementById("phoneStep").style.display = "none";
     document.getElementById("otpStep").style.display = "block";
-    
-    // Teacher ko impress karne ke liye console me OTP dikhao (Optional)
     console.log("Demo OTP is: 1234"); 
 }
 
@@ -254,7 +231,6 @@ function sendOTP() {
 function verifyOTP() {
     const otp = document.getElementById("otpInput").value.trim();
     
-    // Demo ke liye OTP '1234' set kiya hai
     if (otp === "1234") {
         const phone = document.getElementById("phoneNumber").value;
         localStorage.setItem("cinema_logged_in", "true");
