@@ -61,18 +61,29 @@
   </div>
 
   <script src="script.js"></script>
-  <!-- 🔐 LOGIN MODAL -->
-  <div class="modal-overlay" id="loginModal" style="display: none;">
-    <div class="modal" style="text-align: center; max-width: 350px;">
-      <div class="modal-header">
-        <h3 style="color:#e50914; margin:0;">🔒 Member Login</h3>
-        <button class="close-btn" onclick="closeLoginModal()">&times;</button>
+  <!-- 🔐 OTP LOGIN MODAL -->
+  <div class="modal-overlay" id="loginModal" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
+    <div class="modal" style="background: #111; padding: 30px; border-radius: 12px; text-align: center; max-width: 350px; width: 90%; border: 1px solid #333; box-shadow: 0px 4px 20px rgba(229, 9, 20, 0.3);">
+      
+      <h3 style="color:#e50914; margin: 0 0 10px 0; font-size: 22px;">🔒 Login with Phone</h3>
+      <p style="color:#aaa; font-size: 13px; margin-bottom: 25px;">Enter your mobile number to continue</p>
+      
+      <!-- Step 1: Phone Number -->
+      <div id="phoneStep">
+          <input type="number" id="phoneNumber" placeholder="+91 | Enter 10 digit number" style="width: 90%; padding: 12px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #444; background: #222; color: white; text-align: center; font-size: 16px; letter-spacing: 1px;">
+          <button onclick="sendOTP()" style="width: 100%; padding: 12px; background-color: #e50914; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s;">Send OTP</button>
       </div>
-      <div class="modal-body">
-        <p style="color:#aaa; margin-bottom: 20px; font-size: 14px;">Please login to watch or download movies.</p>
-        <input type="text" id="loginName" placeholder="Enter your Name" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #444; background: #222; color: white;">
-        <button onclick="processLogin()" style="width: 100%; padding: 10px; background-color: #e50914; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Login Now</button>
+
+      <!-- Step 2: OTP Verification (Pehle chhupa rahega) -->
+      <div id="otpStep" style="display: none;">
+          <p style="color:#4caf50; font-size: 13px; margin-bottom: 15px;">OTP sent successfully to your number!</p>
+          <input type="number" id="otpInput" placeholder="Enter 4-digit OTP" style="width: 90%; padding: 12px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #4caf50; background: #222; color: white; text-align: center; font-size: 18px; letter-spacing: 5px;">
+          <button onclick="verifyOTP()" style="width: 100%; padding: 12px; background-color: #4caf50; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s;">Verify & Login</button>
       </div>
+
+      <button onclick="closeLoginModal()" style="margin-top: 20px; background: none; border: none; color: #888; cursor: pointer; text-decoration: underline;">Cancel</button>
+    </div>
+  </div>
     </div>
   </div>
 </body>

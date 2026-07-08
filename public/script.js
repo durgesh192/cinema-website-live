@@ -210,21 +210,64 @@ function closeLoginModal() {
     document.getElementById("loginModal").style.display = "none";
 }
 
-function processLogin() {
-    const name = document.getElementById("loginName").value.trim();
-    if (name === "") {
-        alert("Please enter your name to continue!");
+// ==========================================
+// 🔐 OTP LOGIN SYSTEM LOGIC
+// ==========================================
+let pendingUrl = ""; 
+
+function handleProtectedAction(url) {
+    const isLoggedIn = localStorage.getItem("cinema_logged_in");
+    if (isLoggedIn === "true") {
+        window.open(url, "_blank");
+    } else {
+        pendingUrl = url;
+        // Modal reset karke dikhao
+        document.getElementById("phoneStep").style.display = "block";
+        document.getElementById("otpStep").style.display = "none";
+        document.getElementById("phoneNumber").value = "";
+        document.getElementById("otpInput").value = "";
+        document.getElementById("loginModal").style.display = "flex";
+    }
+}
+
+function closeLoginModal() {
+    document.getElementById("loginModal").style.display = "none";
+}
+
+// 📱 OTP Bhejne ka Fake Logic
+function sendOTP() {
+    const phone = document.getElementById("phoneNumber").value.trim();
+    if (phone.length !== 10) {
+        alert("Please enter a valid 10-digit mobile number!");
         return;
     }
     
-    localStorage.setItem("cinema_logged_in", "true");
-    localStorage.setItem("cinema_user_name", name);
+    // UI Update: Phone chhipao, OTP wala dabba dikhao
+    document.getElementById("phoneStep").style.display = "none";
+    document.getElementById("otpStep").style.display = "block";
     
-    alert(`Welcome, ${name}! 🎉`);
-    closeLoginModal();
+    // Teacher ko impress karne ke liye console me OTP dikhao (Optional)
+    console.log("Demo OTP is: 1234"); 
+}
+
+// 🔑 OTP Verify karne ka Logic
+function verifyOTP() {
+    const otp = document.getElementById("otpInput").value.trim();
     
-    if (pendingUrl) {
-        window.open(pendingUrl, "_blank");
-        pendingUrl = "";
+    // Demo ke liye OTP '1234' set kiya hai
+    if (otp === "1234") {
+        const phone = document.getElementById("phoneNumber").value;
+        localStorage.setItem("cinema_logged_in", "true");
+        localStorage.setItem("cinema_user_phone", phone);
+        
+        alert(`Login Successful! 🎉`);
+        closeLoginModal();
+        
+        if (pendingUrl) {
+            window.open(pendingUrl, "_blank");
+            pendingUrl = "";
+        }
+    } else {
+        alert("❌ Incorrect OTP! Please enter '1234' for this demo.");
     }
 }
