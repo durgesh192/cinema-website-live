@@ -61,5 +61,19 @@
   </div>
 
   <script src="script.js"></script>
+  <!-- 🔐 LOGIN MODAL -->
+  <div class="modal-overlay" id="loginModal" style="display: none;">
+    <div class="modal" style="text-align: center; max-width: 350px;">
+      <div class="modal-header">
+        <h3 style="color:#e50914; margin:0;">🔒 Member Login</h3>
+        <button class="close-btn" onclick="closeLoginModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:#aaa; margin-bottom: 20px; font-size: 14px;">Please login to watch or download movies.</p>
+        <input type="text" id="loginName" placeholder="Enter your Name" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #444; background: #222; color: white;">
+        <button onclick="processLogin()" style="width: 100%; padding: 10px; background-color: #e50914; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Login Now</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

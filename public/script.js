@@ -1,3 +1,4 @@
+
 window.addEventListener('load', () => {
     const searchInput = document.getElementById("search");
     const aiInput = document.getElementById("userInput");
@@ -71,7 +72,7 @@ fetch("/api/movies")
     setTimeout(() => { renderMovies(allMovies); }, 800); // Shimmer effect delay
   }).catch(err => console.error("Movies API Error:", err));
 
-// 🌟 YAHI PAR MAGIC HAI: Watch Party aur Download ke dono buttons lag gaye hain
+// 🌟 YAHI PAR MAGIC HAI: Watch Party aur Download ke buttons (with Login Protection)
 function renderMovies(moviesToRender) {
   if(!grid) return;
   grid.innerHTML = "";
@@ -97,12 +98,12 @@ function renderMovies(moviesToRender) {
         <span style="color:#aaa; font-size:12px;">${m.category || 'Movie'}</span>
         
         <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
-            <a href="/watch.html?vid=${encodeURIComponent(m.link || '')}" target="_blank" class="btn-watch" style="flex: 1; background-color: #ff6b00; color: white; text-align: center; padding: 8px 5px; text-decoration: none; border-radius: 5px; font-size: 13px; font-weight: bold;">
+            <button onclick="handleProtectedAction('/watch.html?vid=${encodeURIComponent(m.link || '')}')" class="btn-watch" style="flex: 1; border: none; cursor: pointer; background-color: #ff6b00; color: white; text-align: center; padding: 8px 5px; border-radius: 5px; font-size: 13px; font-weight: bold;">
                 🍿 Watch Party
-            </a>
-            <a href="${m.link || '#'}" target="_blank" class="btn-download" style="flex: 1; background-color: #0088cc; color: white; text-align: center; padding: 8px 5px; text-decoration: none; border-radius: 5px; font-size: 13px; font-weight: bold;">
+            </button>
+            <button onclick="handleProtectedAction('${m.link || '#'}')" class="btn-download" style="flex: 1; border: none; cursor: pointer; background-color: #0088cc; color: white; text-align: center; padding: 8px 5px; border-radius: 5px; font-size: 13px; font-weight: bold;">
                 ${downloadBtnText}
-            </a>
+            </button>
         </div>
 
       </div>
@@ -122,7 +123,6 @@ if(searchInputDOM) {
 }
 
 // AI LOGIC
-// 🚨 API KEY HATA DI GAYI HAI SECURITY KE LIYE. APNI KEY YAHAN DALEN:
 const geminiApiKey = "AQ.Ab8RN6LpMtImUJ-vlXYz7scFzDdlKpeLSpSNP1IFJJVzZr69rg"; 
 
 async function callGeminiAPI(promptText) {
@@ -183,4 +183,48 @@ function startVoiceSearch() {
     recognition.onresult = (e) => { userInput.value = e.results[0][0].transcript; processAIFilter(); };
     recognition.onend = () => { document.getElementById('micBtn').style.background = "#222"; userInput.placeholder = "Likh kar search karein..."; };
     recognition.start();
+}
+
+// ==========================================
+// 🔐 LOGIN SYSTEM LOGIC
+// ==========================================
+let pendingUrl = ""; 
+
+function handleProtectedAction(url) {
+    const isLoggedIn = localStorage.getItem("cinema_logged_in");
+    
+    if (isLoggedIn === "true") {
+        window.open(url, "_blank");
+    } else {
+        pendingUrl = url;
+        const loginModal = document.getElementById("loginModal");
+        if(loginModal) {
+            loginModal.style.display = "flex";
+        } else {
+            alert("Please login first!"); // Fallback agar HTML me modal na ho
+        }
+    }
+}
+
+function closeLoginModal() {
+    document.getElementById("loginModal").style.display = "none";
+}
+
+function processLogin() {
+    const name = document.getElementById("loginName").value.trim();
+    if (name === "") {
+        alert("Please enter your name to continue!");
+        return;
+    }
+    
+    localStorage.setItem("cinema_logged_in", "true");
+    localStorage.setItem("cinema_user_name", name);
+    
+    alert(`Welcome, ${name}! 🎉`);
+    closeLoginModal();
+    
+    if (pendingUrl) {
+        window.open(pendingUrl, "_blank");
+        pendingUrl = "";
+    }
 }
